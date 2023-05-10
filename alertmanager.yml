@@ -1,0 +1,11 @@
+route:
+  receiver: 'email'
+
+receivers:
+- name: 'email'
+  email_configs:
+  - to: '${{ secrets.ALERT_EMAIL }}'
+    from: '${{ secrets.ALERT_EMAIL_FROM }}'
+    smarthost: ${{ secrets.ALERT_EMAIL_SMARTHOST }}
+    auth_username: '${{ secrets.SMTP_USERNAME }}'
+    auth_password: '${{ secrets.SMTP_PASSWORD }}'

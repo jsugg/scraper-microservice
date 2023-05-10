@@ -1,0 +1,46 @@
+name: Rollback
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  rollback:
+    if: contains(github.event.comment.body, 'rollback to')
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Extract version from comment
+      id: version
+      run: |
+        version=${{ github.event.comment.body }} | cut -d' ' -f3
+        echo "::set-output name=version::$version"
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Checkout to version
+      run: git checkout ${{ steps.version.outputs.version }}
+      
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18.16.0'
+      
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run tests
+      run: npm test
+
+    - name: Build Docker image
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/scraping-microservice:${{ github.sha }} .
+      
+    - name: Log into Docker Hub
+      run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+      
+    - name: Push Docker image
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/scraping-microservice:${{ github.sha }}
+
+    - name: Revert production branch to version
+      run: git push -f origin ${{ steps.version.outputs.version }}:production
