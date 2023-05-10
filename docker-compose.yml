@@ -1,6 +1,6 @@
 version: '3'
 services:
-  scraping-microservice:
+  scraper-microservice:
     build: .
     volumes:
       - .:/usr/src/app
@@ -19,7 +19,7 @@ services:
     ports:
       - 80:80
     depends_on:
-      - scraping-microservice
+      - scraper-microservice
   prometheus:
     image: prom/prometheus:v2.37
     volumes:
