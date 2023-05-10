@@ -6,7 +6,7 @@ const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 const prometheusClient = require('prom-client');
-const scrapingService = require('./scrapingService');
+const scraperService = require('./scraperService');
 const { chromium } = require('playwright');
 
 // Setup express app
@@ -17,7 +17,7 @@ const swaggerOptions = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "Scraping Microservice API",
+            title: "Scraper Microservice API",
             version: "1.0.0",
             description: "A simple API for a web scraping microservice",
         },
@@ -62,7 +62,7 @@ app.use(cors());
 
 // Sample endpoint for testing
 app.get('/', (req, res) => {
-  res.json({ message: 'Scraping microservice is working' });
+  res.json({ message: 'Scraper microservice is working' });
 });
 
 // Start the server
@@ -88,7 +88,7 @@ app.listen(PORT, () => logger.info(`Server is running on port ${PORT}`));
 app.post('/scrape', async (req, res) => {
     const { url } = req.body;
     try {
-        const data = await scrapingService.scrape(url);
+        const data = await scraperService.scrape(url);
         res.json(data);
     } catch (err) {
         console.log(err);
@@ -99,14 +99,14 @@ app.post('/scrape', async (req, res) => {
 // Save session endpoint
 app.post('/session', (req, res) => {
     const { session } = req.body;
-    scrapingService.saveSession(session);
+    scraperService.saveSession(session);
     res.json({ message: 'Session saved' });
 });
 
 // Get session endpoint
 app.get('/session', async (req, res) => {
     try {
-        const session = await scrapingService.getSession();
+        const session = await scraperService.getSession();
         res.json(session);
     } catch (err) {
         res.status(500).json({ error: 'An error occurred while getting the session' });
@@ -121,18 +121,18 @@ async function login() {
     // Perform login actions here
     const session = await context.storageState();
     await browser.close();
-    scrapingService.saveSession(session);
+    scraperService.saveSession(session);
 }
   
 async function logout() {
-    const session = await scrapingService.getSession();
+    const session = await scraperService.getSession();
     if (session) {
         // Perform logout actions here actions here
     }
 }
   
 const url = 'http://example.com'; // Replace with your actual URL
-scrapingService.keepAlive(url, login, logout); // Replace login and logout with your actual login and logout functions
+scraperService.keepAlive(url, login, logout); // Replace login and logout with your actual login and logout functions
 
 // Prometheus metrics endpoint
 const collectDefaultMetrics = prometheusClient.collectDefaultMetrics;
