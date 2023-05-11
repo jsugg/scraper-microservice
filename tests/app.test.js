@@ -2,7 +2,7 @@ const request = require('supertest');
 const { test, expect } = require('@jest/globals');
 const { chromium } = require('playwright');
 
-const app = require('../index');
+const app = require('../src/index');
 
 test('GET / should respond with status 200', async () => {
   const response = await request(app).get('/');

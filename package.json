@@ -2,11 +2,11 @@
   "name": "@jsugg/scraper-microservice",
   "version": "1.0.0",
   "description": "Boilerplate for a scraper microservice using Playwright, Express, Redis, Swagger, Winston, PM2, Prometheus, and Grafana",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --forceExit",
     "build": "npx playwright install-deps",
-    "start": "pm2 start index.js --name scraper-microservice"
+    "start": "pm2 start server.js --name scraper-microservice"
   },
   "keywords": [
     "scraping",
@@ -24,6 +24,7 @@
   "repository": "github:jsugg/scraper-microservice",
   "homepage": "https://github.com/jsugg/scraper-microservice",
   "dependencies": {
+    "app-root-path": "^3.1.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "express-rate-limit": "^6.7.0",
