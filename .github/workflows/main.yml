@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.check_release.outputs.release }}
 
     steps:
     - name: Check out repository code
@@ -39,7 +41,7 @@ jobs:
 
   deploy:
     needs: build-and-test
-    if: ${{ steps.check_release.outputs.release == '1' }}
+    if: ${{ needs.build-and-test.outputs.release == '1' }}
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
